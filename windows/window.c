@@ -5501,7 +5501,50 @@ static int TranslateKey(UINT message, WPARAM wParam, LPARAM lParam,
 	    p += sprintf((char *) p, "\x1B%c", " HLMEIG"[code]);
 	    return p - output;
 	}
-	
+
+	/* xterm+pcf2 function keys */
+	if (funky_type == FUNKY_XTERM_PCF2) {
+		if (code >= 11 && code <= 34) {
+			/* SCO function keys */
+			int index = 0;
+			int modifier = 0;
+			switch (wParam) {
+			case VK_F1: index = 11; break;
+			case VK_F2: index = 12; break;
+			case VK_F3: index = 13; break;
+			case VK_F4: index = 14; break;
+			case VK_F5: index = 15; break;
+			case VK_F6: index = 17; break;
+			case VK_F7: index = 18; break;
+			case VK_F8: index = 19; break;
+			case VK_F9: index = 20; break;
+			case VK_F10: index = 21; break;
+			case VK_F11: index = 23; break;
+			case VK_F12: index = 24; break;
+			}
+			if (keystate[VK_SHIFT] & 0x80) {
+				if (keystate[VK_CONTROL] & 0x80) modifier = 6;
+				else if (keystate[VK_MENU] & 0x80) modifier = 4;
+				else modifier = 2;
+			}
+			else if (keystate[VK_CONTROL] & 0x80) modifier = 5;
+			else if (keystate[VK_MENU] & 0x80) modifier = 3;
+			if (wParam >= VK_F1 && wParam <= VK_F4) {
+				if (modifier == 0)
+					p += sprintf((char *)p, "\x1BO%c", index - 11 + 'P');
+				else
+					p += sprintf((char *)p, "\x1B[1;%d%c", modifier, index - 11 + 'P');
+			}
+			else {
+				if (modifier == 0)
+					p += sprintf((char *)p, "\x1B[%d~", index);
+				else
+					p += sprintf((char *)p, "\x1B[%d;%d~", index, modifier);
+			}
+			return p - output;
+		}
+	}
+
 	/* 4690 function and special keys */ 
 	if (funky_type == FUNKY_4690) {
 		if (code >= 11 && code <= 34) {

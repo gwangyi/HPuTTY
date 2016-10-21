@@ -1635,7 +1635,7 @@ void setup_config_box(struct controlbox *b, int midsession,
 		      I(CONF_funky_type),
 		      "ESC[n~", I(0), "Linux", I(1), "Xterm R6", I(2),
                       "VT400", I(3), "VT100+", I(4), "SCO", I(5), 
-                      "4690", I(6), NULL);
+                      "4690", I(6), "xterm+pcf2", I(7), NULL);
 
     s = ctrl_getset(b, "Terminal/Keyboard", "appkeypad",
 		    "Application keypad settings:");
